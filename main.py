@@ -72,6 +72,7 @@ def main():
     enemie_bullets = []
     enemies = []
     enemie_cooldown = 2000
+    enemie_bullet_cooldown = 2000
     last = 0
     live = 5
     
@@ -120,10 +121,12 @@ def main():
         if now - last > 5000:
         	if enemie_cooldown > 1500:
         		enemie_cooldown -= 500
+            if enemie_bullet_cooldown-500 > 200:
+                enemie_bullet_cooldown -= 500
         	last = now
 
         #--------------ENEMIES BULLETS--------------
-        if now - shot_bullet >= 1500:
+        if now - shot_bullet >= enemie_bullet_cooldown:
         	for enemie in enemies:
 	        	enemie_bullets.append([enemie[0] + ENEMIE_WIDTH//2 + BULLET_WIDTH//2, enemie[1]])
         	shot_bullet = now
