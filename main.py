@@ -119,11 +119,12 @@ def main():
         		enemies.remove(enemie)
 
         if now - last > 5000:
-        	if enemie_cooldown > 1500:
-        		enemie_cooldown -= 500
+            if enemie_cooldown > 1500:
+                enemie_cooldown -= 500
+
             if enemie_bullet_cooldown-500 > 200:
                 enemie_bullet_cooldown -= 500
-        	last = now
+            last = now
 
         #--------------ENEMIES BULLETS--------------
         if now - shot_bullet >= enemie_bullet_cooldown:
