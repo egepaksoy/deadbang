@@ -74,9 +74,8 @@ def draw(x, y, bullets, enemies, enemie_bullets, live, score, hearts):
             WIN.blit(E_SHIP, (enemie[0], enemie[1]))
 
     if hearts:
-        for heart in hearts:
-            if hearts[heart] != "101":
-                WIN.blit(HEART, (hearts[heart][0], hearts[heart][1]))
+        for h in hearts:
+            WIN.blit(HEART, (h[0][0], h[0][1]))
 
     WIN.blit(SHIP, (x, y))
 
@@ -94,7 +93,8 @@ def main():
     bullets = []
     enemie_bullets = []
     enemies = []
-    hearts = {}
+    hearts = []
+    heart_pos = []
     enemie_cooldown = 2000
     enemie_bullet_cooldown = 2000
     last = 0
@@ -180,41 +180,37 @@ def main():
                     bullets.remove(bullet)
                     if spawn_heart and live + hr < 5:
                         hr += 1
-                        hearts[x] = [enemie[0] + ENEMIE_WIDTH//2 - HEART_WIDTH//2, enemie[1] + ENEMIE_HEIGHT//2 - HEART_HEIGHT//2, VEL_HEART_X]
-                        x += 1
+                        hearts.append([[enemie[0] + ENEMIE_WIDTH//2 - HEART_WIDTH//2, enemie[1] + ENEMIE_HEIGHT//2 - HEART_HEIGHT//2, VEL_HEART_X], VEL_HEART_X])
 
         #-------------MOVE HEARTS---------------
         for h in hearts:
-            if hearts[h] != "101":
-                # saga ve sola hareket
-                if hearts[h][0] + 1.5*HEART_WIDTH < WIN_WIDTH and hearts[h][0] > 0:
-                    hearts[h][0] += hearts[h][2]
-                # sagdan sekme
-                if hearts[h][0] + 1.5*HEART_WIDTH > WIN_WIDTH:
-                    hearts[h][2] = -hearts[h][2]
-                    hearts[h][0] += hearts[h][2]
-                # soldan sekme
-                if hearts[h][0] <= HEART_WIDTH//2:
-                    hearts[h][2] = -hearts[h][2]
-                    hearts[h][0] += hearts[h][2]
+            # saga ve sola hareket
+            if h[0][0] + 1.5*HEART_WIDTH < WIN_WIDTH and h[0][0] > 0:
+                h[0][0] += h[1]
+            # sagdan sekme
+            if h[0][0] + 1.5*HEART_WIDTH > WIN_WIDTH:
+                h[1] = -h[1]
+                h[0][0] += h[1]
+            # soldan sekme
+            if h[0][0] <= HEART_WIDTH//2:
+                h[1] = -h[1]
+                h[0][0] += h[1]
 
-                hearts[h][1] += VEL_HEART_Y
-
-                # assagi carpma
-                if hearts[h][1] > WIN_HEIGHT:
-                    hearts.update({h: "101"})
+            h[0][1] += VEL_HEART_Y
+            # asagiya carpma
+            if h[0][1] > WIN_HEIGHT:
+                hearts.remove(h)
 
 
         # -----------COLLECT HEART--------------
-        for h in hearts:
-            if hearts[h] != "101":
-                if (ship_x + SHIP_WIDTH > hearts[h][0] > ship_x or ship_x + SHIP_WIDTH > hearts[h][0] + HEART_WIDTH > ship_x or
-                    ship_x == hearts[h][0] or ship_x + SHIP_WIDTH == hearts[h][0] or ship_x == hearts[h][0] + HEART_WIDTH or 
-                    ship_x + SHIP_WIDTH == hearts[h][0] + HEART_WIDTH) and (
-                    hearts[h][1] + HEART_HEIGHT > ship_y > hearts[h][1] or hearts[h][1] + HEART_HEIGHT > ship_y + SHIP_HEIGHT > hearts[h][1]):
-                    hearts.update({h: "101"})
-                    live += 1
-                    hr -= 1
+        for h in hearts:        
+            if (ship_x + SHIP_WIDTH > h[0][0] > ship_x or ship_x + SHIP_WIDTH > h[0][0] + HEART_WIDTH > ship_x or
+                ship_x == h[0][0] or ship_x + SHIP_WIDTH == h[0][0] or ship_x == h[0][0] + HEART_WIDTH or 
+                ship_x + SHIP_WIDTH == h[0][0] + HEART_WIDTH) and (
+                h[0][1] + HEART_HEIGHT > ship_y > h[0][1] or h[0][1] + HEART_HEIGHT > ship_y + SHIP_HEIGHT > h[0][1]):
+                hearts.remove(h)
+                live += 1
+                hr -= 1
 
 
         # ------------DROP LIVE----------------
